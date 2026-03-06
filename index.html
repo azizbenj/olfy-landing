@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olfy — The subscription app built around retention</title>
+  <meta name="description" content="Olfy is the Shopify subscription platform that puts retention first. Cancel flows, smart dunning, cohort analytics, and a self-serve portal — all designed to keep your subscribers longer.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Onest:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Tokens ─────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --ink:    #1A1714;
+      --ink-80: rgba(26,23,20,0.80);
+      --ink-60: rgba(26,23,20,0.60);
+      --ink-40: rgba(26,23,20,0.40);
+      --ink-12: rgba(26,23,20,0.12);
+      --ink-06: rgba(26,23,20,0.06);
+      --ink-04: rgba(26,23,20,0.04);
+      --cream:  #F5F0EB;
+      --cream-deep: #EDE6DF;
+      --white:  #FFFFFF;
+      --steel:  #7A6E65;
+      --sage:   #2D8A6E;
+      --sage-bg: rgba(45,138,110,0.08);
+      --brick:  #C0392B;
+      --amber:  #B8860B;
+      --border: rgba(150,100,50,0.12);
+      --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 2px 8px rgba(0,0,0,0.03);
+      --shadow-lg: 0 4px 12px rgba(0,0,0,0.06), 0 12px 40px rgba(0,0,0,0.04);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Onest', sans-serif;
+      color: var(--ink);
+      background: var(--cream);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      line-height: 1.6;
+    }
+
+    h1, h2, h3, h4, h5, h6 {
+      font-family: 'Inter', sans-serif;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Animations ──────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
+    }
+
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+                  transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Utility ─────────────────────────────────────────────────── */
+    .container {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    .section-label {
+      font-family: 'Onest', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--steel);
+      display: inline-block;
+      padding: 6px 14px;
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      background: var(--white);
+    }
+
+    .section-title {
+      font-size: clamp(32px, 5vw, 48px);
+      margin-top: 20px;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      font-family: 'Onest', sans-serif;
+      font-size: 18px;
+      color: var(--steel);
+      max-width: 560px;
+      margin: 0 auto;
+      line-height: 1.65;
+    }
+
+    /* ── Nav ──────────────────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: rgba(245, 240, 235, 0.85);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      transition: box-shadow 0.3s ease;
+    }
+    nav.scrolled {
+      box-shadow: 0 1px 8px rgba(0,0,0,0.06);
+    }
+    .nav-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 0 24px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .nav-logo {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: 28px;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 32px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--steel);
+      transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--ink); }
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      padding: 10px 22px;
+      background: var(--ink);
+      color: var(--cream) !important;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 600;
+      transition: background 0.2s;
+    }
+    .nav-cta:hover { background: #2C2824; }
+
+    /* ── Hero ─────────────────────────────────────────────────────── */
+    .hero {
+      padding: 160px 24px 80px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 800px;
+      background: radial-gradient(circle, rgba(150,100,50,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero h1 {
+      font-size: clamp(42px, 7vw, 72px);
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      max-width: 780px;
+      margin: 0 auto 24px;
+      animation: fadeUp 0.8s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    .hero h1 em {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-weight: 400;
+    }
+    .hero-sub {
+      font-size: 19px;
+      color: var(--steel);
+      max-width: 540px;
+      margin: 0 auto 40px;
+      line-height: 1.65;
+      animation: fadeUp 0.8s 0.15s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      animation: fadeUp 0.8s 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: var(--ink);
+      color: var(--cream);
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: #2C2824; transform: translateY(-1px); }
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 32px;
+      background: transparent;
+      color: var(--ink);
+      border: 1px solid var(--ink-12);
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--ink-40); background: var(--white); }
+
+    /* Hero product shot */
+    .hero-shot {
+      max-width: 1000px;
+      margin: 56px auto 0;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-lg), 0 0 0 1px var(--border);
+      animation: fadeUp 0.8s 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+      position: relative;
+    }
+    .hero-shot-inner {
+      background: var(--white);
+      border-radius: 16px;
+      padding: 24px;
+      min-height: 420px;
+      display: flex;
+      gap: 20px;
+    }
+    .mock-sidebar {
+      width: 200px;
+      flex-shrink: 0;
+      background: var(--ink);
+      border-radius: 12px;
+      padding: 20px 16px;
+    }
+    .mock-sidebar-logo {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-size: 22px;
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 28px;
+    }
+    .mock-nav-item {
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.5);
+      margin-bottom: 2px;
+      font-weight: 500;
+    }
+    .mock-nav-item.active {
+      background: rgba(255,255,255,0.10);
+      color: #fff;
+      border-left: 2px solid rgba(255,255,255,0.6);
+    }
+    .mock-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .mock-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .mock-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .mock-pills {
+      display: flex;
+      gap: 6px;
+    }
+    .mock-pill {
+      padding: 5px 14px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--ink-06);
+      color: var(--steel);
+    }
+    .mock-pill.active {
+      background: var(--ink);
+      color: var(--cream);
+    }
+    .mock-kpis {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+    }
+    .mock-kpi {
+      background: var(--cream);
+      border-radius: 10px;
+      padding: 16px;
+      border: 1px solid var(--border);
+    }
+    .mock-kpi-label {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--steel);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 6px;
+    }
+    .mock-kpi-value {
+      font-family: 'Inter', sans-serif;
+      font-size: 22px;
+      font-weight: 700;
+    }
+    .mock-kpi-delta {
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+    .mock-kpi-delta.up { color: var(--sage); }
+    .mock-kpi-delta.down { color: var(--brick); }
+    .mock-chart {
+      flex: 1;
+      background: var(--cream);
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      position: relative;
+      overflow: hidden;
+      min-height: 180px;
+    }
+    .mock-chart svg {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* ── Beta Banner ─────────────────────────────────────────────── */
+    .beta-banner {
+      padding: 40px 24px 48px;
+      text-align: center;
+    }
+    .beta-banner-inner {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 20px;
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--steel);
+    }
+    .beta-dot {
+      width: 8px;
+      height: 8px;
+      background: var(--sage);
+      border-radius: 50%;
+      animation: pulse 2s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    /* ── Problem Section ─────────────────────────────────────────── */
+    .problem {
+      padding: 80px 24px;
+    }
+    .problem-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      background: var(--ink);
+      border-radius: 20px;
+      padding: 64px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .problem-inner::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .problem-title {
+      font-size: clamp(24px, 4vw, 36px);
+      color: rgba(255,255,255,0.9);
+      margin-bottom: 20px;
+      text-align: center;
+    }
+    .problem-title em {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-weight: 400;
+      color: #fff;
+    }
+    .problem-text {
+      font-size: 17px;
+      color: rgba(255,255,255,0.50);
+      max-width: 600px;
+      margin: 0 auto;
+      text-align: center;
+      line-height: 1.7;
+    }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+      margin-top: 48px;
+    }
+    .problem-card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 14px;
+      padding: 28px 24px;
+    }
+    .problem-card-icon {
+      font-size: 24px;
+      margin-bottom: 16px;
+    }
+    .problem-card h3 {
+      font-size: 16px;
+      color: rgba(255,255,255,0.85);
+      margin-bottom: 8px;
+    }
+    .problem-card p {
+      font-size: 14px;
+      color: rgba(255,255,255,0.45);
+      line-height: 1.6;
+    }
+
+    /* ── Features ─────────────────────────────────────────────────── */
+    .features {
+      padding: 100px 24px;
+      background: var(--white);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+      margin-top: 56px;
+      max-width: 1120px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .feature-card {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 40px 32px;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow 0.3s, transform 0.3s;
+    }
+    .feature-card:hover {
+      box-shadow: var(--shadow-lg);
+      transform: translateY(-2px);
+    }
+    .feature-card-label {
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--steel);
+      margin-bottom: 12px;
+    }
+    .feature-card h3 {
+      font-size: 22px;
+      margin-bottom: 12px;
+    }
+    .feature-card p {
+      font-size: 15px;
+      color: var(--steel);
+      line-height: 1.65;
+      max-width: 380px;
+    }
+    .feature-card-visual {
+      margin-top: 28px;
+      background: var(--white);
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      padding: 20px;
+      min-height: 140px;
+    }
+
+    /* Feature visual mini-components */
+    .mini-flow {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .mini-flow-step {
+      background: var(--cream);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .mini-flow-arrow {
+      color: var(--ink-40);
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+    .mini-flow-step.highlight {
+      background: var(--sage-bg);
+      border-color: rgba(45,138,110,0.2);
+      color: var(--sage);
+    }
+    .mini-flow-step.danger {
+      background: rgba(192,57,43,0.08);
+      border-color: rgba(192,57,43,0.15);
+      color: var(--brick);
+    }
+    .mini-metric {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--ink-06);
+    }
+    .mini-metric:last-child { border-bottom: none; }
+    .mini-metric-label { font-size: 13px; color: var(--steel); }
+    .mini-metric-value { font-size: 14px; font-weight: 700; }
+    .mini-metric-delta {
+      font-size: 12px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    .mini-metric-delta.up { color: var(--sage); }
+
+    /* ── How It Works ─────────────────────────────────────────────── */
+    .how {
+      padding: 100px 24px;
+      text-align: center;
+    }
+    .how-steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      margin-top: 56px;
+      max-width: 1120px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .how-step {
+      text-align: center;
+    }
+    .how-step-number {
+      width: 48px;
+      height: 48px;
+      background: var(--ink);
+      color: var(--cream);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Inter', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      margin: 0 auto 20px;
+    }
+    .how-step h3 {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+    .how-step p {
+      font-size: 15px;
+      color: var(--steel);
+      line-height: 1.6;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    /* ── Pricing ──────────────────────────────────────────────────── */
+    .pricing {
+      padding: 100px 24px;
+      background: var(--white);
+      text-align: center;
+    }
+    .pricing-single {
+      max-width: 480px;
+      margin: 56px auto 0;
+    }
+    .pricing-card {
+      background: var(--ink);
+      color: rgba(255,255,255,0.9);
+      border-radius: 20px;
+      padding: 48px 40px;
+      text-align: left;
+      position: relative;
+      overflow: hidden;
+    }
+    .pricing-card::before {
+      content: '';
+      position: absolute;
+      top: -40%;
+      right: -20%;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .pricing-beta-badge {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      padding: 5px 12px;
+      border-radius: 100px;
+      background: rgba(45,138,110,0.15);
+      color: rgba(45,138,110,0.9);
+      margin-bottom: 20px;
+    }
+    .pricing-card h3 {
+      font-size: 24px;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .pricing-card-desc {
+      font-size: 15px;
+      color: rgba(255,255,255,0.50);
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+    .pricing-amount {
+      display: flex;
+      align-items: baseline;
+      gap: 4px;
+      margin-bottom: 4px;
+    }
+    .pricing-dollar {
+      font-family: 'Inter', sans-serif;
+      font-size: 56px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
+    .pricing-period {
+      font-size: 16px;
+      color: rgba(255,255,255,0.45);
+      font-weight: 500;
+    }
+    .pricing-transaction {
+      font-size: 14px;
+      color: rgba(255,255,255,0.40);
+      margin-bottom: 8px;
+    }
+    .pricing-after {
+      font-size: 13px;
+      color: rgba(255,255,255,0.30);
+      margin-bottom: 32px;
+      font-style: italic;
+    }
+    .pricing-divider {
+      height: 1px;
+      background: rgba(255,255,255,0.08);
+      margin-bottom: 28px;
+    }
+    .pricing-features {
+      list-style: none;
+      margin-bottom: 36px;
+    }
+    .pricing-feature {
+      font-size: 14px;
+      color: rgba(255,255,255,0.70);
+      padding: 7px 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pricing-feature::before {
+      content: '✓';
+      font-weight: 700;
+      color: rgba(45,138,110,0.8);
+      font-size: 13px;
+      flex-shrink: 0;
+    }
+    .pricing-card .btn-primary {
+      background: var(--cream);
+      color: var(--ink);
+      width: 100%;
+      justify-content: center;
+      padding: 14px 32px;
+    }
+    .pricing-card .btn-primary:hover {
+      background: #fff;
+    }
+    .pricing-note {
+      margin-top: 20px;
+      font-size: 13px;
+      color: var(--steel);
+      text-align: center;
+    }
+
+    /* ── FAQ ──────────────────────────────────────────────────────── */
+    .faq {
+      padding: 100px 24px;
+      text-align: center;
+    }
+    .faq-list {
+      max-width: 680px;
+      margin: 56px auto 0;
+      text-align: left;
+    }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+    }
+    .faq-question {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 20px 0;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      text-align: left;
+    }
+    .faq-question::after {
+      content: '+';
+      font-size: 20px;
+      color: var(--steel);
+      transition: transform 0.3s;
+      flex-shrink: 0;
+      margin-left: 16px;
+    }
+    .faq-item.open .faq-question::after {
+      content: '−';
+    }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease, padding 0.35s ease;
+    }
+    .faq-item.open .faq-answer {
+      max-height: 300px;
+      padding-bottom: 20px;
+    }
+    .faq-answer p {
+      font-size: 15px;
+      color: var(--steel);
+      line-height: 1.65;
+    }
+
+    /* ── CTA ──────────────────────────────────────────────────────── */
+    .cta-section {
+      padding: 100px 24px;
+      background: var(--white);
+      text-align: center;
+    }
+    .cta-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      background: var(--ink);
+      border-radius: 20px;
+      padding: 80px 48px;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-inner::before {
+      content: '';
+      position: absolute;
+      bottom: -50%;
+      left: -20%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255,255,255,0.04) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-inner h2 {
+      font-size: clamp(28px, 4vw, 42px);
+      color: #fff;
+      margin-bottom: 16px;
+    }
+    .cta-inner h2 em {
+      font-family: 'Instrument Serif', serif;
+      font-style: italic;
+      font-weight: 400;
+    }
+    .cta-inner p {
+      font-size: 17px;
+      color: rgba(255,255,255,0.55);
+      max-width: 480px;
+      margin: 0 auto 32px;
+      line-height: 1.65;
+    }
+    .cta-inner .btn-primary {
+      background: var(--cream);
+      color: var(--ink);
+    }
+    .cta-inner .btn-primary:hover {
+      background: #fff;
+    }
+
+    /* ── Footer ───────────────────────────────────────────────────── */
+    footer {
+      padding: 64px 24px 40px;
+      border-top: 1px solid var(--border);
+    }
+    .footer-inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.5fr repeat(3, 1fr);
+      gap: 48px;
+    }
+    .footer-brand .nav-logo {
+      margin-bottom: 12px;
+      display: block;
+    }
+    .footer-brand p {
+      font-size: 14px;
+      color: var(--steel);
+      max-width: 260px;
+      line-height: 1.6;
+    }
+    .footer-col h4 {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+    .footer-col a {
+      display: block;
+      font-size: 14px;
+      color: var(--steel);
+      padding: 4px 0;
+      transition: color 0.2s;
+    }
+    .footer-col a:hover { color: var(--ink); }
+    .footer-bottom {
+      max-width: 1120px;
+      margin: 40px auto 0;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .footer-bottom p {
+      font-size: 13px;
+      color: var(--ink-40);
+    }
+
+    /* ── Responsive ───────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .problem-grid { grid-template-columns: 1fr; }
+      .features-grid { grid-template-columns: 1fr; }
+      .how-steps { grid-template-columns: 1fr; }
+      .footer-inner { grid-template-columns: 1fr 1fr; }
+      .mock-sidebar { display: none; }
+      .mock-kpis { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 600px) {
+      .nav-links { display: none; }
+      .hero h1 { font-size: 36px; }
+      .hero-actions { flex-direction: column; align-items: center; }
+      .problem-inner { padding: 48px 24px; }
+      .pricing-card { padding: 36px 28px; }
+      .footer-inner { grid-template-columns: 1fr; gap: 32px; }
+    }
+
+    /* ── Mobile menu ─────────────────────────────────────────────── */
+    .mobile-menu-btn {
+      display: none;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 8px;
+    }
+    .mobile-menu-btn span {
+      display: block;
+      width: 20px;
+      height: 2px;
+      background: var(--ink);
+      margin: 4px 0;
+      border-radius: 2px;
+    }
+    @media (max-width: 600px) {
+      .mobile-menu-btn { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Nav -->
+  <nav id="nav">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">Olfy</a>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How it Works</a></li>
+        <li><a href="#pricing">Pricing</a></li>
+        <li><a href="#faq">FAQ</a></li>
+        <li><a href="https://app.olfy.io/login" class="nav-cta">Start free trial</a></li>
+      </ul>
+      <button class="mobile-menu-btn" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <h1>Subscription tools help you sell. <em>Olfy helps you keep.</em></h1>
+    <p class="hero-sub">Most subscription apps stop at checkout. Olfy starts there — with cancel flows, dunning, cohort analytics, and a self-serve portal designed to make subscribers stay longer.</p>
+    <div class="hero-actions">
+      <a href="https://app.olfy.io/login" class="btn-primary">Start 14-day free trial <span style="font-size:16px">→</span></a>
+      <a href="#features" class="btn-secondary">See how it works</a>
+    </div>
+
+    <!-- Mock Dashboard -->
+    <div class="hero-shot">
+      <div class="hero-shot-inner">
+        <div class="mock-sidebar">
+          <div class="mock-sidebar-logo">Olfy</div>
+          <div class="mock-nav-item active">Analytics</div>
+          <div class="mock-nav-item">Subscriptions</div>
+          <div class="mock-nav-item">Customers</div>
+          <div class="mock-nav-item">Retention</div>
+          <div class="mock-nav-item">Churn</div>
+          <div class="mock-nav-item">Portal</div>
+          <div class="mock-nav-item">Workflows</div>
+        </div>
+        <div class="mock-content">
+          <div class="mock-header">
+            <h3>Analytics</h3>
+            <div class="mock-pills">
+              <div class="mock-pill">7d</div>
+              <div class="mock-pill active">30d</div>
+              <div class="mock-pill">90d</div>
+            </div>
+          </div>
+          <div class="mock-kpis">
+            <div class="mock-kpi">
+              <div class="mock-kpi-label">MRR</div>
+              <div class="mock-kpi-value">$48.2k</div>
+              <div class="mock-kpi-delta up">▲ 3.2%</div>
+            </div>
+            <div class="mock-kpi">
+              <div class="mock-kpi-label">Active Subs</div>
+              <div class="mock-kpi-value">1,247</div>
+              <div class="mock-kpi-delta up">▲ 5.1%</div>
+            </div>
+            <div class="mock-kpi">
+              <div class="mock-kpi-label">Churn Rate</div>
+              <div class="mock-kpi-value">4.2%</div>
+              <div class="mock-kpi-delta up">▼ 0.8%</div>
+            </div>
+            <div class="mock-kpi">
+              <div class="mock-kpi-label">LTV</div>
+              <div class="mock-kpi-value">$186</div>
+              <div class="mock-kpi-delta up">▲ 12%</div>
+            </div>
+          </div>
+          <div class="mock-chart">
+            <svg viewBox="0 0 700 180" preserveAspectRatio="none">
+              <line x1="0" y1="45" x2="700" y2="45" stroke="rgba(0,0,0,0.04)" />
+              <line x1="0" y1="90" x2="700" y2="90" stroke="rgba(0,0,0,0.04)" />
+              <line x1="0" y1="135" x2="700" y2="135" stroke="rgba(0,0,0,0.04)" />
+              <path d="M0,160 L50,140 L100,135 L150,120 L200,110 L250,100 L300,95 L350,85 L400,75 L450,70 L500,55 L550,45 L600,40 L650,30 L700,25 L700,180 L0,180 Z"
+                    fill="rgba(26,23,20,0.04)" />
+              <path d="M0,160 L50,140 L100,135 L150,120 L200,110 L250,100 L300,95 L350,85 L400,75 L450,70 L500,55 L550,45 L600,40 L650,30 L700,25"
+                    fill="none" stroke="#1A1714" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="700" cy="25" r="4" fill="#1A1714" />
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Beta Banner -->
+  <section class="beta-banner fade-up">
+    <div class="beta-banner-inner">
+      <div class="beta-dot"></div>
+      Now onboarding founding merchants — beta pricing available
+    </div>
+  </section>
+
+  <!-- Problem Section -->
+  <section class="problem fade-up">
+    <div class="problem-inner">
+      <h2 class="problem-title">You're spending to acquire. <em>You're forgetting to retain.</em></h2>
+      <p class="problem-text">Subscription apps help you sign people up. But most do nothing when those subscribers start leaving. That's the gap Olfy fills.</p>
+      <div class="problem-grid">
+        <div class="problem-card fade-up">
+          <div class="problem-card-icon">📉</div>
+          <h3>Churn is silent</h3>
+          <p>Subscribers cancel one by one. By the time you notice a trend, you've already lost months of revenue.</p>
+        </div>
+        <div class="problem-card fade-up">
+          <div class="problem-card-icon">💳</div>
+          <h3>Payments fail quietly</h3>
+          <p>Expired cards, insufficient funds, soft declines — failed payments churn more subscribers than dissatisfaction does.</p>
+        </div>
+        <div class="problem-card fade-up">
+          <div class="problem-card-icon">🔍</div>
+          <h3>No visibility into why</h3>
+          <p>Most tools show you that churn happened. Olfy shows you why it happened, which cohorts are at risk, and what to do about it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features fade-up" id="features">
+    <div class="container" style="text-align:center">
+      <div class="section-label">Features</div>
+      <h2 class="section-title">Built to keep subscribers, not just manage them</h2>
+      <p class="section-subtitle">Cancel flows, payment recovery, cohort analytics, and a self-serve portal — working together to protect your recurring revenue.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-up">
+        <div class="feature-card-label">Retention Engine</div>
+        <h3>Smart cancel flows</h3>
+        <p>When a subscriber tries to cancel, Olfy intercepts with dynamic offers — pause, skip, swap, or discount — based on the reason, their history, and their value.</p>
+        <div class="feature-card-visual">
+          <div class="mini-flow">
+            <div class="mini-flow-step danger">Cancel request</div>
+            <div class="mini-flow-arrow">→</div>
+            <div class="mini-flow-step">Reason survey</div>
+            <div class="mini-flow-arrow">→</div>
+            <div class="mini-flow-step highlight">Offer: Pause 2mo</div>
+          </div>
+          <div style="margin-top:14px; display:flex; gap:8px">
+            <div class="mini-flow-step highlight" style="font-size:11px">Subscriber saved</div>
+            <div class="mini-flow-step" style="font-size:11px">+2.3 avg additional orders</div>
+          </div>
+        </div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-card-label">Payment Recovery</div>
+        <h3>Dunning that actually works</h3>
+        <p>Smart retry logic, timed email sequences, and in-portal payment updates. Stop losing subscribers to expired cards and soft declines.</p>
+        <div class="feature-card-visual">
+          <div class="mini-metric">
+            <span class="mini-metric-label">Payment declined</span>
+            <span><span class="mini-metric-value">Auto-retry</span></span>
+          </div>
+          <div class="mini-metric">
+            <span class="mini-metric-label">Retry #1 (Day 3)</span>
+            <span><span class="mini-metric-value" style="color:var(--sage)">Recovered</span></span>
+          </div>
+          <div class="mini-metric">
+            <span class="mini-metric-label">Email sequence</span>
+            <span><span class="mini-metric-value">3-touch</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-card-label">Analytics</div>
+        <h3>Cohort-level visibility</h3>
+        <p>Track MRR, churn, LTV, and retention by cohort, product, channel, or plan. See which subscribers are at risk before they leave.</p>
+        <div class="feature-card-visual">
+          <div class="mini-metric">
+            <span class="mini-metric-label">Jan cohort retention</span>
+            <span><span class="mini-metric-value">78%</span><span class="mini-metric-delta up">▲ 4%</span></span>
+          </div>
+          <div class="mini-metric">
+            <span class="mini-metric-label">Feb cohort retention</span>
+            <span><span class="mini-metric-value">82%</span><span class="mini-metric-delta up">▲ 6%</span></span>
+          </div>
+          <div class="mini-metric">
+            <span class="mini-metric-label">Top product LTV</span>
+            <span><span class="mini-metric-value">$214</span></span>
+          </div>
+        </div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-card-label">Customer Portal</div>
+        <h3>Self-serve subscriber experience</h3>
+        <p>Let customers skip, swap, pause, and manage their own subscriptions. Fewer support tickets, happier subscribers.</p>
+        <div class="feature-card-visual">
+          <div class="mini-flow" style="flex-direction:column; align-items:stretch; gap:8px">
+            <div class="mini-flow-step" style="text-align:center">Skip next order</div>
+            <div class="mini-flow-step" style="text-align:center">Swap product</div>
+            <div class="mini-flow-step highlight" style="text-align:center">Add to next box</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how fade-up" id="how-it-works">
+    <div class="container">
+      <div class="section-label">How it works</div>
+      <h2 class="section-title">From install to insight in 10 minutes</h2>
+      <p class="section-subtitle">One Shopify OAuth click. No developer, no theme changes, no migration headaches.</p>
+    </div>
+    <div class="how-steps">
+      <div class="how-step fade-up">
+        <div class="how-step-number">1</div>
+        <h3>Connect your store</h3>
+        <p>One-click Shopify install. Olfy syncs your subscriptions, customers, and order history automatically.</p>
+      </div>
+      <div class="how-step fade-up">
+        <div class="how-step-number">2</div>
+        <h3>Configure retention</h3>
+        <p>Set up cancel flows, dunning rules, and portal settings. No-code builder with templates to start fast.</p>
+      </div>
+      <div class="how-step fade-up">
+        <div class="how-step-number">3</div>
+        <h3>Watch churn drop</h3>
+        <p>See recovery rates, retention trends, and cohort health in real-time. Olfy works in the background while you focus on growth.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="pricing fade-up" id="pricing">
+    <div class="container">
+      <div class="section-label">Pricing</div>
+      <h2 class="section-title">One plan. No surprises.</h2>
+      <p class="section-subtitle">Simple pricing that scales with you. Start with a 14-day free trial — no credit card required.</p>
+    </div>
+    <div class="pricing-single">
+      <div class="pricing-card fade-up">
+        <div class="pricing-beta-badge">Beta pricing — limited spots</div>
+        <h3>Olfy for Shopify</h3>
+        <div class="pricing-card-desc">Everything you need to manage subscriptions, reduce churn, and recover failed payments.</div>
+        <div class="pricing-amount">
+          <span class="pricing-dollar">$99</span>
+          <span class="pricing-period">/mo</span>
+        </div>
+        <div class="pricing-transaction">+ 1% + 19¢ per transaction</div>
+        <div class="pricing-after">$399/mo after beta period</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li class="pricing-feature">Subscription management & analytics</li>
+          <li class="pricing-feature">Cohort analysis & LTV tracking</li>
+          <li class="pricing-feature">Smart cancel flows with dynamic offers</li>
+          <li class="pricing-feature">Dunning & failed payment recovery</li>
+          <li class="pricing-feature">Self-serve customer portal</li>
+          <li class="pricing-feature">Win-back workflows</li>
+          <li class="pricing-feature">API access</li>
+          <li class="pricing-feature">Priority support</li>
+        </ul>
+        <a href="https://app.olfy.io/login" class="btn-primary">Start 14-day free trial <span style="font-size:16px">→</span></a>
+      </div>
+      <p class="pricing-note">No credit card required to start. Cancel anytime.</p>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq fade-up" id="faq">
+    <div class="container">
+      <div class="section-label">FAQ</div>
+      <h2 class="section-title">Common questions</h2>
+    </div>
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question">How does Olfy integrate with my Shopify store?</button>
+        <div class="faq-answer"><p>Olfy installs as a Shopify app via one-click OAuth. It syncs your existing subscription data, customers, and orders automatically. No theme code changes required — everything runs through our dashboard and APIs.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">I'm already using Recharge / Skio / Bold. Can I switch?</button>
+        <div class="faq-answer"><p>Yes. Olfy is a complete subscription management platform. If you're migrating from another tool, we'll help you through the process. If you're starting fresh, you can create selling plans directly from Olfy.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">How do cancel flows work?</button>
+        <div class="faq-answer"><p>When a subscriber clicks cancel, Olfy intercepts and presents a configurable flow: a reason survey followed by dynamic offers (pause, skip, swap, discount) tailored to the cancellation reason and the subscriber's value. You set the rules in our no-code builder.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">What's the 1% + 19¢ transaction fee?</button>
+        <div class="faq-answer"><p>It's a small per-transaction fee on subscription orders processed through Olfy. This is standard across subscription platforms and keeps the monthly base price low so you can grow into it.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">You're new — why should I trust Olfy?</button>
+        <div class="faq-answer"><p>Fair question. We're in beta and actively onboarding our founding merchants. That means you get direct access to the team, your feedback shapes the product, and you lock in beta pricing ($99/mo vs $399/mo later). We built Olfy because we saw DTC brands paying $300-500/mo for subscription tools that still couldn't tell them why subscribers were leaving.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-question">Is there a free trial?</button>
+        <div class="faq-answer"><p>Yes — 14 days, no credit card required. Install Olfy, connect your store, and see the full platform in action before you commit.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="cta-inner fade-up">
+      <h2>Your subscribers are already <em>making up their minds.</em></h2>
+      <p>Every month without a retention strategy is revenue walking out the door. Start your free trial and see where the leaks are.</p>
+      <a href="https://app.olfy.io/login" class="btn-primary">Start 14-day free trial <span style="font-size:16px">→</span></a>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <span class="nav-logo">Olfy</span>
+        <p>The Shopify subscription platform that puts retention first. Built for DTC brands who care about keeping subscribers, not just counting them.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Platform</h4>
+        <a href="#features">Retention Engine</a>
+        <a href="#features">Payment Recovery</a>
+        <a href="#features">Analytics</a>
+        <a href="#features">Customer Portal</a>
+      </div>
+      <div class="footer-col">
+        <h4>Resources</h4>
+        <a href="#">Documentation</a>
+        <a href="#">API Reference</a>
+        <a href="#">Changelog</a>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <a href="#">About</a>
+        <a href="#">Contact</a>
+        <a href="#">Privacy Policy</a>
+        <a href="#">Terms of Service</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Olfy. All rights reserved.</p>
+      <p style="font-family:'Instrument Serif',serif; font-style:italic; font-size:15px; color:var(--ink-40)">Built for Shopify</p>
+    </div>
+  </footer>
+
+  <script>
+    // Nav scroll effect
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 10);
+    });
+
+    // Intersection observer for fade-up animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+    document.querySelectorAll('.fade-up').forEach(el => observer.observe(el));
+
+    // FAQ accordion
+    document.querySelectorAll('.faq-question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.parentElement;
+        const wasOpen = item.classList.contains('open');
+        document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+        if (!wasOpen) item.classList.add('open');
+      });
+    });
+  </script>
+</body>
+</html>
